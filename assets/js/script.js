@@ -5,25 +5,20 @@ const menuHamburguer = document.querySelector(".hamburger");
 const carrosel = document.querySelector('.carousel');
 const corpo = document.querySelector('#main');
 
-async function carregaJogos() {
-  try{
-      const response = await fetch("./assets/bancoDeDados/db.json")
-      if(!response.ok){
-        throw new Error("Erro ao se conectar com o arquivo json()")
-      }else{
-        const dados = await response.json()
-        bancoDeDados = dados;
-        console.log(bancoDeDados)
-        // Crie um array de Promises para carregar todas as imagens
-        const carregamentoImagens = bancoDeDados.map((item) => carregaImagem(item.img));
-        // Aguarde o carregamento de todas as imagens
-        await Promise.all(carregamentoImagens);
-        // Após o carregamento das imagens, mostre os jogos
-        mostraJogos(bancoDeDados)
+function carregaJogos() {
+  fetch("./assets/bancoDeDados/db.json")
+    .then(requisição => {
+      if (!requisição.ok) {
+        throw new Error("Erro na requisição não foi possivel se conectar!")
+      } else {
+        return requisição.json()
       }
-    }catch(erro){
-      console.log(erro)
-    }
+    }).then(dado => {
+      bancoDeDados = dado
+      const carregamentoDeImagem = bancoDeDados.map(item => carregaImagem(item.img))
+      Promise.all(carregamentoDeImagem)
+      mostraJogos(bancoDeDados)
+    })
 }
 
 function carregaImagem(src) {
